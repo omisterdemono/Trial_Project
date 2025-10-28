@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 namespace Player
 {
     [RequireComponent(typeof(Player),typeof(MovementComponent))]
-    public class PlayerControlls : MonoBehaviour
+    public class PlayerControls : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] MovementComponent _movementComponent;
