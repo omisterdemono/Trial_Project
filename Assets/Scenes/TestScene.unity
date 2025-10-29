@@ -23182,6 +23182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3e9943b066aea04ca9f840ec2873f3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 0}
+  _rigidbody: {fileID: 0}
 --- !u!114 &1446535821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23511,6 +23513,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movement: {fileID: 1792814921}
   _player: {fileID: 1446535818}
+  _rigidbody: {fileID: 0}
+  _animator: {fileID: 0}
   _patrolPoints:
   - {fileID: 1674514788}
   - {fileID: 662113218}

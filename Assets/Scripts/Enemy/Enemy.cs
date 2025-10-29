@@ -5,13 +5,15 @@ using UnityEngine;
 
 namespace EnemySystem
 {
-    [RequireComponent(typeof(MovementComponent))]
+    [RequireComponent(typeof(MovementComponent), typeof(Rigidbody2D), typeof(AnimationController))]
     public class Enemy : MonoBehaviour
     {
-        private const float AttackCooldownTime = 1f;
+        private const float AttackCooldownTime = 2f;
         [Header("References")]
         [SerializeField] private MovementComponent _movement;
         [SerializeField] private Transform _player;
+        [SerializeField] private Rigidbody2D _rigidbody;
+        [SerializeField] private AnimationController _animationController;
 
         [Header("Patrol Settings")]
         [SerializeField] private Transform[] _patrolPoints;
@@ -37,6 +39,8 @@ namespace EnemySystem
         private void Awake()
         {
             _movement = GetComponent<MovementComponent>();
+            _rigidbody = GetComponent<Rigidbody2D>();
+            _animationController = GetComponent<AnimationController>();
         }
 
         private void Start()
@@ -57,14 +61,17 @@ namespace EnemySystem
                 {
                     _attackCooldown = 0f;
                     ChangeState(new AttackState(this));
+                    _animationController.PlayTrigger("Attack");
                     return;
                 }
-                else if (dist < _viewDistance && dist >= _attackDistance)
+                else if (dist < _viewDistance && dist >= _attackDistance && !_animationController.IsPlaying("Attack"))
                 {
                     _lastKnownPlayerPos = _player.position;
                     ChangeState(new FollowState(this, _lastKnownPlayerPos));
                 }
             }
+
+            _animationController.SetMoveDirection(_rigidbody.linearVelocity);
         }
 
         private void FixedUpdate()
