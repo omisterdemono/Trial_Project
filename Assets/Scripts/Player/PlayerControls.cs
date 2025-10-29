@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Player
 {
-    [RequireComponent(typeof(Player),typeof(MovementComponent))]
+    [RequireComponent(typeof(MovementComponent))]
     public class PlayerControls : MonoBehaviour
     {
         [Header("References")]
