@@ -33,7 +33,6 @@ namespace Player
             if (interactable != null && !_interactables.Contains(interactable))
             {
                 _interactables.Add(interactable);
-                Debug.Log("aeqweqweqwe");
             }
         }
 

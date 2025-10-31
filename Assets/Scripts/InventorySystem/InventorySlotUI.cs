@@ -79,11 +79,13 @@ namespace InventorySystem.UI
                 {
                     _slot.quantity--;
                     if (_slot.quantity <= 0)
-                        _slot.item = null;
+                    {
+                        Inventory.Instance.RemoveItem(_slot);
+                    } 
                 }
                 else
                 {
-                    _slot.item = null; // remove non-stackable item after use
+                    Inventory.Instance.RemoveItem(_slot);
                 }
 
                 Inventory.Instance.NotifyInventoryChanged(); // refresh UI

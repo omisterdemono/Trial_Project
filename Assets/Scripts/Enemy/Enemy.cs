@@ -6,28 +6,26 @@ namespace EnemySystem
     [RequireComponent(typeof(MovementComponent), typeof(Rigidbody2D), typeof(AnimationController))]
     public class Enemy : MonoBehaviour
     {
-        private const float AttackCooldownTime = 2f;
         [Header("References")]
         [SerializeField] private MovementComponent _movement;
-        [SerializeField] private Transform _player;
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private AnimationController _animationController;
+
+        [Header("Attack Settings")]
+        [SerializeField] private float _attackDistance = 1.5f;
+        [SerializeField] private float _attackCooldownTime = 2f;
 
         [Header("Patrol Settings")]
         [SerializeField] private Transform[] _patrolPoints;
         [SerializeField] private float _patrolRadius = 5f;
 
-        [Header("Detection Settings")]
-        [SerializeField] private float _viewDistance = 7f;
-        [SerializeField] private float _attackDistance = 1.5f;
-        
-        private int _patrolIndex = 0;
-        private float _attackCooldown = 0;
+        private int _patrolIndex;
+        private float _attackCooldown;
         private EnemyState _currentState;
+        private Transform _detectedPlayer;
         private Vector2 _lastKnownPlayerPos;
 
         public MovementComponent Movement => _movement;
-        public Transform Player => _player;
         public Transform[] PatrolPoints => _patrolPoints;
         public float PatrolRadius => _patrolRadius;
         public Vector2 LastKnownPlayerPos => _lastKnownPlayerPos;
@@ -51,20 +49,20 @@ namespace EnemySystem
             _attackCooldown += Time.deltaTime;
             _currentState?.UpdateLogic();
 
-            // Detection logic
-            if (_player != null)
+            if (_detectedPlayer != null)
             {
-                float dist = Vector2.Distance(transform.position, _player.position);
-                if (dist < _attackDistance && _attackCooldown >= AttackCooldownTime)
+                float dist = Vector2.Distance(transform.position, _detectedPlayer.position);
+
+                if (dist <= _attackDistance && _attackCooldown >= _attackCooldownTime)
                 {
                     _attackCooldown = 0f;
                     ChangeState(new AttackState(this));
                     _animationController.PlayTrigger("Attack");
                     return;
                 }
-                else if (dist < _viewDistance && dist >= _attackDistance && !_animationController.IsPlaying("Attack"))
+                else if (dist > _attackDistance && !_animationController.IsPlaying("Attack"))
                 {
-                    _lastKnownPlayerPos = _player.position;
+                    _lastKnownPlayerPos = _detectedPlayer.position;
                     ChangeState(new FollowState(this, _lastKnownPlayerPos));
                 }
             }
@@ -82,6 +80,24 @@ namespace EnemySystem
             _currentState?.Exit();
             _currentState = newState;
             _currentState?.Enter();
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                _detectedPlayer = other.transform;
+                _lastKnownPlayerPos = _detectedPlayer.position;
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if (_detectedPlayer != null && other.transform == _detectedPlayer)
+            {
+                _detectedPlayer = null;
+                ChangeState(new IdleState(this));
+            }
         }
     }
 }
