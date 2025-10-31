@@ -16,6 +16,8 @@ namespace Common
         private Vector2 _moveDirection = Vector2.zero;
         private Vector2 _currentVelocity;
 
+        public Vector2 MoveDirection { get => _moveDirection; set => _moveDirection = value; }
+
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();

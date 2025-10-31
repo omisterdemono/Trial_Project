@@ -1,4 +1,5 @@
 using Common;
+using System;
 using UnityEngine;
 
 namespace EnemySystem
@@ -10,6 +11,7 @@ namespace EnemySystem
         [SerializeField] private MovementComponent _movement;
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private AnimationController _animationController;
+        [SerializeField] private CustomColliderTrigger _viewCollider;
 
         [Header("Attack Settings")]
         [SerializeField] private float _attackDistance = 1.5f;
@@ -37,6 +39,18 @@ namespace EnemySystem
             _movement = GetComponent<MovementComponent>();
             _rigidbody = GetComponent<Rigidbody2D>();
             _animationController = GetComponent<AnimationController>();
+        }
+
+        private void OnEnable()
+        {
+            _viewCollider.OnTriggerEnter += SetPlayerPosition;
+            _viewCollider.OnTriggerExit += RemovePlayerPosition;
+        }
+
+        private void OnDisable()
+        {
+            _viewCollider.OnTriggerEnter -= SetPlayerPosition;
+            _viewCollider.OnTriggerExit -= RemovePlayerPosition;
         }
 
         private void Start()
@@ -75,29 +89,22 @@ namespace EnemySystem
             _currentState?.UpdatePhysics();
         }
 
+        private void SetPlayerPosition(GameObject gameObject)
+        {
+            _detectedPlayer = gameObject.transform;
+            _lastKnownPlayerPos = _detectedPlayer.position;
+        }
+        private void RemovePlayerPosition(GameObject @object)
+        {
+            _detectedPlayer = null;
+            ChangeState(new IdleState(this));
+        }
+
         public void ChangeState(EnemyState newState)
         {
             _currentState?.Exit();
             _currentState = newState;
             _currentState?.Enter();
-        }
-
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            if (other.CompareTag("Player"))
-            {
-                _detectedPlayer = other.transform;
-                _lastKnownPlayerPos = _detectedPlayer.position;
-            }
-        }
-
-        private void OnTriggerExit2D(Collider2D other)
-        {
-            if (_detectedPlayer != null && other.transform == _detectedPlayer)
-            {
-                _detectedPlayer = null;
-                ChangeState(new IdleState(this));
-            }
         }
     }
 }

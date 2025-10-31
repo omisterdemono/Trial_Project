@@ -15,11 +15,11 @@ TagManager:
   - Player
   - Interactable
   - Enemy
-  - 
-  - 
-  - 
-  - 
-  - 
+  - PlayerHitBox
+  - EnemyHitBox
+  - PlayerDamage
+  - EnemyView
+  - PlayerInteractRadius
   - 
   - 
   - 
