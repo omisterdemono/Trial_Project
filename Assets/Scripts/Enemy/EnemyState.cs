@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace EnemySystem
 {
     public abstract class EnemyState

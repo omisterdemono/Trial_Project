@@ -8,19 +8,36 @@ namespace Player
     public class PlayerControls : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] MovementComponent _movementComponent;
-        [SerializeField] Animator _animator;
+        [SerializeField] private MovementComponent _movementComponent;
+        [SerializeField] private GameObject _inventoryPanel;
+        private Player _player;
 
         private void Awake()
         {
             _movementComponent = GetComponent<MovementComponent>();
-            _animator = GetComponent<Animator>();            
+            _player = GetComponent<Player>();
         }
 
-        void OnMove(InputValue value)
+        private void OnMove(InputValue value)
         {
             Vector2 direction = value.Get<Vector2>();
             _movementComponent.Move(direction);
+        }
+
+        private void OnInventory()
+        {
+            _inventoryPanel.SetActive(!_inventoryPanel.activeSelf);
+        }
+
+        private void OnInteract()
+        {
+            Debug.Log("interact");
+            if (_player.Interactables.Count > 0)
+            {
+                IInteractable interactable = _player.Interactables[_player.Interactables.Count - 1];
+                interactable.Interact();
+                _player.Interactables.Remove(interactable);
+            }
         }
     }
 }

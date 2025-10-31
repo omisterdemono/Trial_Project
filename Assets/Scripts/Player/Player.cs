@@ -1,4 +1,5 @@
 using Common;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Player
@@ -10,6 +11,10 @@ namespace Player
         [SerializeField] private Rigidbody2D _rigidbody;
         [SerializeField] private AnimationController _animationController;
 
+        private List<IInteractable> _interactables = new List<IInteractable>();
+
+        public List<IInteractable> Interactables { get => _interactables;}
+
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
@@ -19,6 +24,23 @@ namespace Player
         private void Update()
         {
             _animationController.SetMoveDirection(_rigidbody.linearVelocity);
+        }
+        
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            collision.TryGetComponent<IInteractable>(out IInteractable interactable);
+
+            if (interactable != null && !_interactables.Contains(interactable))
+            {
+                _interactables.Add(interactable);
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            collision.TryGetComponent<IInteractable>(out IInteractable interactable);
+
+            _interactables.Remove(interactable);
         }
     }
 }
