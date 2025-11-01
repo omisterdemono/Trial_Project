@@ -11,7 +11,6 @@ namespace EnemySystem
         public override void Enter()
         {
             _enemy.Movement.Move(Vector2.zero);
-            Debug.Log("Attack!");
             _hasAttacked = true;
         }
 
