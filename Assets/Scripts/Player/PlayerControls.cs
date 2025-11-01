@@ -21,7 +21,7 @@ namespace Player
         private void OnMove(InputValue value)
         {
             Vector2 direction = value.Get<Vector2>();
-            _movementComponent.Move(direction);
+            _player.Move(direction);
         }
 
         private void OnInventory()
@@ -38,6 +38,11 @@ namespace Player
                 interactable.Interact();
                 _player.Interactables.Remove(interactable);
             }
+        }
+
+        private void OnAttack()
+        {
+            _player.Attack();
         }
     }
 }
